@@ -2,6 +2,7 @@
 */plugins/*
 !*/plugins
 !*/plugins/*.jar
+!*/start.config
 !*/*.jar
 
 # Ignore vscode logs
