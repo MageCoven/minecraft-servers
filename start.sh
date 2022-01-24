@@ -42,7 +42,7 @@ for folder in $folders; do
 
     tmux has-session -t "${folder//@([.]|[\/])}" 2>/dev/null
     if [ $? != 0 ]; then
-        echo "Server $folder already running"
+        echo "ERROR: Server ${folder//@([.]|[\/])} already running"
         continue
     fi
 
