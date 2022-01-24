@@ -1,4 +1,5 @@
 #!/bin/bash
+shopt -s extglob
 
 folders=()
 
@@ -40,7 +41,7 @@ for folder in $folders; do
         exit 1
     fi
 
-    session=$(sed -i "s/([\/]|[\.])//g" <<< $folder)
+    session=${folder//@(.|\/)}
 
     tmux has-session -t "$session" 2>/dev/null
     if [ $? == 0 ]; then
