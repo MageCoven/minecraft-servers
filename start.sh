@@ -41,7 +41,7 @@ for folder in $folders; do
     fi
 
     tmux has-session -t ${folder//@(*\/|[.])} 2>/dev/null
-    if [ $? != 0]; then
+    if [ $? != 0 ]; then
         echo "Server $folder already running"
         continue
     fi
