@@ -2,6 +2,7 @@
 shopt -s extglob
 
 folders=()
+force=false
 
 function parse_config_file {
     if [ ! -f "start.config" ]; then
@@ -26,6 +27,9 @@ function parse_config_file {
 
 for arg in "$@"; do
     case $arg in
+        -f|--force )
+            force=true
+            shift
         * )
             folders+=("$1")
             shift
@@ -47,8 +51,12 @@ for folder in $folders; do
 
     tmux has-session -t "$session" 2>/dev/null
     if [ $? == 0 ]; then
-        echo "ERROR: Server $session already running"
-        continue
+        if [ $force ]; then
+            tmux kill-session -t "$session"
+        else
+            echo "ERROR: Server $session already running"
+            continue
+        fi
     fi
 
     (
