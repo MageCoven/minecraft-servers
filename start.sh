@@ -9,13 +9,13 @@ function parse_config_file {
         exit 1
     fi
 
-    grep ^file=.*\.jar$ start.config 2>/dev/null
+    grep ^file=.*\.jar$ start.config 1>/dev/null
     if [ $? != 0 ]; then
         echo "ERROR: start.config either does not have a `file` field or it is incorrectly initialized"
         exit 1
     fi
 
-    grep ^memory=[1-9][0-9]*$ start.config 2>/dev/null
+    grep ^memory=[1-9][0-9]*$ start.config 1>/dev/null
     if [ $? != 0 ]; then
         echo "ERROR: start.config either does not have a `memory` field or it is incorrectly initialized"
         exit 1
