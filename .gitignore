@@ -2,3 +2,4 @@
 */plugins/*
 !*/plugins
 !*/plugins/*.jar
+!*/*.jar
