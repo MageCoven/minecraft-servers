@@ -29,10 +29,10 @@ for arg in "$@"; do
     case $arg in
         -f|--force )
             force=true
-            shift
+            shift;;
         * )
             folders+=("$1")
-            shift
+            shift;;
     esac
 done
 
