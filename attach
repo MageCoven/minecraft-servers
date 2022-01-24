@@ -1,0 +1,13 @@
+#! /bin/bash
+
+session=${1//@(.|\/)}
+
+tmux has-session -t "$session" 2>/dev/null
+if [ $? != 0 ]; then
+    if [ $force ]; then
+        tmux attach -t "$session"
+    else
+        echo "ERROR: Server $session not running"
+        continue
+    fi
+fi
