@@ -58,7 +58,7 @@ for folder in $folders; do
 
         echo "Creating tmux session $session"
         tmux new -d -s "$session"
-        if [ $? =! 0 ]; then
+        if [ $? != 0 ]; then
             echo "ERROR: Tmux exited abnormally with exit code $?"
             exit 1
         fi
