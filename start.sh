@@ -4,7 +4,7 @@ folders=()
 
 function parse_config_file {
     if [ ! -f "start.config" ]; then
-        echo "ERROR: ${folder} lacks a start.config file"
+        echo "ERROR: ${folder:-"Current folder"} lacks a start.config file"
         exit 1
     fi
 
@@ -29,7 +29,12 @@ for arg in "$@"; do
     esac
 done
 
-for $folder in folders; do
+if [ ${#folders[*]} == 0 ]; then
+    echo "No folders provided"
+    exit 1
+fi
+
+for folder in $folders; do
     if [ ! -d $folder ]; then
         echo "ERROR: ${folder} does not exist"
         exit 1
@@ -37,7 +42,7 @@ for $folder in folders; do
 
     tmux has-session -t ${folder//@(*\/|[.])} 2>/dev/null
     if [ $? != 0]; then
-        echo "Server ${folder} already running"
+        echo "Server $folder already running"
         continue
     fi
 
@@ -56,5 +61,4 @@ for $folder in folders; do
         tmux send-keys -t ${folder//@(*\/|[.])}:0 "java -Xmx${memory}G -jar $file --nogui" Enter
         echo "Done"
     )
-
 done
