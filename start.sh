@@ -4,7 +4,7 @@ folders=()
 
 function parse_config_file {
     if [ ! -f "start.config" ]; then
-        echo "ERROR: $folder lacks a start.config file"
+        echo "ERROR: ${folder} lacks a start.config file"
         exit 1
     fi
 
@@ -37,7 +37,7 @@ for $folder in folders; do
 
     tmux has-session -t ${folder//@(*\/|[.])} 2>/dev/null
     if [ $? != 0]; then
-        echo "Server $folder already running"
+        echo "Server ${folder} already running"
         continue
     fi
 
