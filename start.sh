@@ -1,26 +1,60 @@
 #!/bin/bash
 
-memory=6 # Change max RAM memory in giga bytes
-file="" # Set to the file name of the server file
+folders=()
 
-session="${PWD//@(*\/|[.])}" # Get current folder name, with dots removed
-tmux has-session -t $session 2>/dev/null
+function parse_config_file {
+    if [ ! -f "start.config" ]; then
+        echo "ERROR: $folder lacks a start.config file"
+        exit 1
+    fi
 
-if [$file == ""]; then
-    echo "Server file not defined"
-    exit 1
-fi
+    grep "^(file=.*\.jar)" start.config
+    if [ $? != 0 ]; then
+        echo "ERROR: start.config either does not have a `file` field or it is incorrectly initialized"
+    fi
 
-if [$? != 0]; then
-    echo "Creationg session"
-    tmux new -d -s $session
-    echo "Starting server"
-    tmux send-keys -t $session:0 "java -Xmx${memory}G -jar ${file} --nogui" Enter
-    echo "Completed Successfully"
-else
-    read "Server already running, would you like to attach to the session? (y/N)" yn
-    case $yn in
-        [Yy]* ) tmux attach -t $session;;
-        *     ) exit;;
+    grep "^(memory=[1-9][0-9]*)" start.config
+    if [ $? != 0 ]; then
+        echo "ERROR: start.config either does not have a `memory` field or it is incorrectly initialized"
+    fi
+
+    source start.config
+}
+
+for arg in "$@"; do
+    case $arg in
+        * )
+            folders+=("$1")
+            shift
     esac
-fi
+done
+
+for $folder in folders; do
+    if [ ! -d $folder ]; then
+        echo "ERROR: ${folder} does not exist"
+        exit 1
+    fi
+
+    tmux has-session -t ${folder//@(*\/|[.])} 2>/dev/null
+    if [ $? != 0]; then
+        echo "Server $folder already running"
+        continue
+    fi
+
+    (
+        cd $folder
+
+        parse_config_file
+
+        echo "Creating tmux session ${folder//@(*\/|[.])}"
+        tmux new -d -s ${folder//@(*\/|[.])}
+        if [ $? =! 0 ]; then
+            echo "ERROR: Tmux exited abnormally with exit code $?"
+            exit 1
+        fi
+        echo "Sending start command to server"
+        tmux send-keys -t ${folder//@(*\/|[.])}:0 "java -Xmx${memory}G -jar $file --nogui" Enter
+        echo "Done"
+    )
+
+done
