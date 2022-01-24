@@ -4,7 +4,7 @@ shopt -s extglob
 session=${1//@(.|\/)}
 
 tmux has-session -t "$session" 2>/dev/null
-if [ $? != 0 ]; then
+if [ $? == 0 ]; then
     echo "Attaching to session $session"
     tmux attach -t "$session"
 else
