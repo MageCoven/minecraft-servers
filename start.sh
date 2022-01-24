@@ -40,9 +40,11 @@ for folder in $folders; do
         exit 1
     fi
 
-    tmux has-session -t "${folder//@([.]|[\/])}" 2>/dev/null
+    session=$(sed -i "s/([\/]|[\.])//g")
+
+    tmux has-session -t "$session" 2>/dev/null
     if [ $? == 0 ]; then
-        echo "ERROR: Server ${folder//@([.]|[\/])} already running"
+        echo "ERROR: Server $session already running"
         continue
     fi
 
@@ -51,14 +53,14 @@ for folder in $folders; do
 
         parse_config_file
 
-        echo "Creating tmux session ${folder//@([.]|[\/])}"
-        tmux new -d -s "${folder//@(*\/|[.])}"
+        echo "Creating tmux session $session"
+        tmux new -d -s "$session"
         if [ $? =! 0 ]; then
             echo "ERROR: Tmux exited abnormally with exit code $?"
             exit 1
         fi
         echo "Sending start command to server"
-        tmux send-keys -t "${folder//@([.]|[\/])}":0 "java -Xmx${memory}G -jar $file --nogui" Enter
+        tmux send-keys -t "$session":0 "java -Xmx${memory}G -jar $file --nogui" Enter
         echo "Done"
     )
 done
