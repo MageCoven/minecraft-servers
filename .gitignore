@@ -5,6 +5,7 @@
 !*/start.config
 !*/*.jar
 !*/mods
+!*/datapacks
 
 # Ignore vscode logs
 debug.log
