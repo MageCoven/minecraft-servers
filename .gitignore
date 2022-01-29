@@ -4,6 +4,7 @@
 !*/plugins/*.jar
 !*/start.config
 !*/*.jar
+!*/mods
 
 # Ignore vscode logs
 debug.log
